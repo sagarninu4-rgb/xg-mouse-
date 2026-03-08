@@ -1,0 +1,40 @@
+// This is your blueprint for the DB
+model User {
+  id            String    @id @default(uuid())
+  email         String?   @unique
+  phone         String?   @unique
+  password      String?
+  name          String
+  role          Role      @default(USER)
+  wishlist      Product[]
+  orders        Order[]
+  behaviorData  Json?     // Stores gaming preferences for AI
+  createdAt     DateTime  @default(now())
+}
+
+model Product {
+  id            String    @id @default(uuid())
+  name          String
+  price         Float
+  category      String    // FPS, MOBA, MMO
+  dpi           Int
+  weight        String
+  isWireless    Boolean
+  rgb           Boolean
+  stock         Int
+  model3dPath   String?   // For the Three.js viewer
+  reviews       Review[]
+}
+
+model Order {
+  id            String    @id @default(uuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  items         Json
+  totalAmount   Float
+  status        Status    @default(PROCESSING)
+  trackingId    String?
+}
+
+enum Role { USER; ADMIN }
+enum Status { PROCESSING; SHIPPED; DELIVERED; CANCELLED }
